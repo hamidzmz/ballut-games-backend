@@ -1,0 +1,45 @@
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: ballut-mongodb-dev
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: ballut_games
+    volumes:
+      - mongodb_data_dev:/data/db
+    networks:
+      - ballut-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: ballut-app-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - MONGODB_URI=mongodb://mongodb:27017/ballut_games
+      - JWT_SECRET=dev_secret_key_for_testing
+      - ACCESS_TOKEN_EXPIRES_IN=15m
+      - REFRESH_TOKEN_EXPIRES_IN=7d
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - mongodb
+    networks:
+      - ballut-network
+
+volumes:
+  mongodb_data_dev:
+    driver: local
+
+networks:
+  ballut-network:
+    driver: bridge

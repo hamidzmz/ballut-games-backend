@@ -1,0 +1,47 @@
+
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: ballut-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: ballut_games
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - ballut-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: ballut-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - MONGODB_URI=mongodb://mongodb:27017/ballut_games
+      - JWT_SECRET=${JWT_SECRET:-your_super_secret_jwt_key_change_this_in_production}
+      - ACCESS_TOKEN_EXPIRES_IN=${ACCESS_TOKEN_EXPIRES_IN:-15m}
+      - REFRESH_TOKEN_EXPIRES_IN=${REFRESH_TOKEN_EXPIRES_IN:-7d}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - ballut-network
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  ballut-network:
+    driver: bridge
