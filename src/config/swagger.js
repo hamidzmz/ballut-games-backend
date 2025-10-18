@@ -4,13 +4,23 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Ballut Games Authentication API',
+      title: 'Ballut Games API',
       version: '1.0.0',
-      description: 'Authentication service with JWT for Ballut Games',
+      description: 'Authentication and Todo management service with JWT for Ballut Games',
       contact: {
         name: 'API Support',
       },
     },
+    tags: [
+      {
+        name: 'Authentication',
+        description: 'Authentication endpoints',
+      },
+      {
+        name: 'Todos',
+        description: 'Todo list management endpoints',
+      },
+    ],
     servers: [
       {
         url: 'http://localhost:3000',
@@ -109,6 +119,116 @@ const options = {
                   type: 'string',
                 },
               },
+            },
+          },
+        },
+        TodoInput: {
+          type: 'object',
+          required: ['title'],
+          properties: {
+            title: {
+              type: 'string',
+              maxLength: 200,
+              description: 'Todo title',
+              example: 'Complete project documentation',
+            },
+            description: {
+              type: 'string',
+              maxLength: 1000,
+              description: 'Todo description',
+              example: 'Write comprehensive documentation for the API',
+            },
+            completed: {
+              type: 'boolean',
+              description: 'Todo completion status',
+              example: false,
+              default: false,
+            },
+          },
+        },
+        TodoUpdate: {
+          type: 'object',
+          properties: {
+            title: {
+              type: 'string',
+              maxLength: 200,
+              description: 'Todo title',
+              example: 'Complete project documentation',
+            },
+            description: {
+              type: 'string',
+              maxLength: 1000,
+              description: 'Todo description',
+              example: 'Write comprehensive documentation for the API',
+            },
+            completed: {
+              type: 'boolean',
+              description: 'Todo completion status',
+              example: false,
+            },
+          },
+        },
+        Todo: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              description: 'Todo ID',
+              example: '507f1f77bcf86cd799439011',
+            },
+            title: {
+              type: 'string',
+              description: 'Todo title',
+              example: 'Complete project documentation',
+            },
+            description: {
+              type: 'string',
+              description: 'Todo description',
+              example: 'Write comprehensive documentation for the API',
+            },
+            completed: {
+              type: 'boolean',
+              description: 'Todo completion status',
+              example: false,
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Todo creation timestamp',
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Todo last update timestamp',
+            },
+          },
+        },
+        Pagination: {
+          type: 'object',
+          properties: {
+            currentPage: {
+              type: 'integer',
+              example: 1,
+            },
+            totalPages: {
+              type: 'integer',
+              example: 5,
+            },
+            totalItems: {
+              type: 'integer',
+              example: 47,
+            },
+            itemsPerPage: {
+              type: 'integer',
+              example: 10,
+            },
+            hasNextPage: {
+              type: 'boolean',
+              example: true,
+            },
+            hasPreviousPage: {
+              type: 'boolean',
+              example: false,
             },
           },
         },
